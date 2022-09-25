@@ -60,9 +60,9 @@ let c = async () => {
 	app.post('/', (req, res) => {
 		let headers = req.headers
 		if (req.headers["x-api-key"] == undefined) {
-			res.status(400).json({status: 400, message: "Please input an api key"})
+			req.respond({ status: Status.BadRequest, json:  {status: 400, message: "Please input an api key"}})
 		} else if (req.body.length == 0) {
-			res.status(400).json({status: 400, message: "Please input a body"})
+			req.respond({ status: Status.BadRequest, json:  {status: 400, message: "Please input a body with the desired run"}})
 		} else {
 			fetch("https://www.speedrun.com/api/v1/runs", {
 				method: "POST",
@@ -72,9 +72,9 @@ let c = async () => {
 				json: req.body
 			}).then(x => x.json()).then(r => {
 				if (!r.ok) {
-					res.status(r.status).json({status: r.status, message: r.message})
+					res.respond({Status: r.status, json: {status: r.status, message: r.message}})
 				} else {
-					res.json(r)
+					res.respond({json: r})
 				}
 			})
 		}
