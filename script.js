@@ -47,7 +47,7 @@ let c = async () => {
 c()*/
 
 import opine from "https://deno.land/x/opine@2.3.3/mod.ts";
-
+import { Status } from "https://deno.land/std/http/http_status.ts"
 const app = opine();
 
 let c = async () => {
