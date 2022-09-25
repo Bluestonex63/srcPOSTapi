@@ -50,29 +50,37 @@ import opine from "https://deno.land/x/opine@2.3.3/mod.ts";
 
 const app = opine();
 
-app.post('/', (req, res) => {
-	let headers = req.headers
-	console.log(req.headers["x-api-key"], req.body)
-	if (req.headers["x-api-key"] == undefined) {
-		res.status(400).json({status: 400, message: "Please input an api key"})
-	} else if (req.body.length == 0) {
-		res.status(400).json({status: 400, message: "Please input a body"})
-	} else {
-		fetch("https://www.speedrun.com/api/v1/runs", {
-			method: "POST",
-			headers: {
-				"X-API-key": req.headers["x-api-key"]
-			},
-			json: req.body
-		}).then(x => x.json()).then(r => {
-			if (!r.ok) {
-				res.status(r.status).json({status: r.status, message: r.message})
-			} else {
-				res.json(r)
-			}
-		})
-	}
-});
+let c = async () => {
+	app.use((req, res, next) => {
+    	res.append('Access-Control-Allow-Origin', ['*']);
+    	res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    	res.append('Access-Control-Allow-Headers', 'Content-Type, X-API-key');
+    	next();
+	});
+	app.post('/', (req, res) => {
+		let headers = req.headers
+		if (req.headers["x-api-key"] == undefined) {
+			res.status(400).json({status: 400, message: "Please input an api key"})
+		} else if (req.body.length == 0) {
+			res.status(400).json({status: 400, message: "Please input a body"})
+		} else {
+			fetch("https://www.speedrun.com/api/v1/runs", {
+				method: "POST",
+				headers: {
+					"X-API-key": req.headers["x-api-key"]
+				},
+				json: req.body
+			}).then(x => x.json()).then(r => {
+				if (!r.ok) {
+					res.status(r.status).json({status: r.status, message: r.message})
+				} else {
+					res.json(r)
+				}
+			})
+		}
+	});
+}
+c()
 
 app.listen(3000);
 console.log("Running!")
