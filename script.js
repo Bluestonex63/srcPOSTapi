@@ -1,4 +1,4 @@
-import { createRequire } from "https://deno.land/std/node/module.ts";
+/*import { createRequire } from "https://deno.land/std/node/module.ts";
 
 const require = createRequire(import.meta.url);
 
@@ -45,4 +45,37 @@ let c = async () => {
 		console.log('server is listening on port 8080');
 	});
 }
-c()
+c()*/
+
+import { Application, Router } from "https://deno.land/x/oak/mod.ts";
+export { Router, Application };
+
+import { Application } from "./deps.ts";
+import router from "./routes.ts";
+
+const env = Deno.env.toObject()
+const PORT = env.PORT || 3000;
+const HOST = env.HOST || 'localhost';
+
+
+import { Router } from "./deps.ts";
+
+const router = new Router();
+
+router.get("/api/v1/", (context) => {
+  context.response.body = {
+    success: true,
+    msg: "Hello World",
+  };
+});
+
+const app = new Application();
+app.use(errorHandler);
+app.use(router.routes());
+app.use(router.allowedMethods());
+app.use(_404);
+
+console.log(`Server running on port ${port}`);
+
+app.listen(`${HOST}:${PORT}`);
+export default router;
