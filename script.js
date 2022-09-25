@@ -2,7 +2,6 @@
 
 const require = createRequire(import.meta.url);
 
-const fetch = require('node-fetch');
 const express = require('express');
 const cors = require('cors');
 const app = express()
@@ -47,33 +46,12 @@ let c = async () => {
 }
 c()*/
 
-import { Application, Router } from "https://deno.land/x/oak/mod.ts";
-export { Router, Application };
+import opine from "https://deno.land/x/opine@2.3.3/mod.ts";
 
-import router from "./routes.ts";
+const app = opine();
 
-const env = Deno.env.toObject()
-const PORT = env.PORT || 3000;
-const HOST = env.HOST || 'localhost';
-
-
-import { Router } from "./deps.ts";
-
-const app = new Router();
-
-app.get("/api/v1/", (context) => {
-  context.response.body = {
-    success: true,
-    msg: "Hello World",
-  };
+app.use((req, res) => {
+  res.send("Hello World");
 });
 
-app.use(errorHandler);
-app.use(router.routes());
-app.use(router.allowedMethods());
-app.use(_404);
-
-console.log(`Server running on port ${PORT}`);
-
-app.listen(`${HOST}:${PORT}`);
-export default router;
+app.listen(3000);
